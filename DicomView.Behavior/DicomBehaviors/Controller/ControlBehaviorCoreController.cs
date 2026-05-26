@@ -52,7 +52,7 @@ namespace DicomView.Behaviors.DicomBehaviors.Controller
 
     public abstract class ControlBehaviorCoreController<Control, Attach> : Behavior<Control>, IBehaviorController<Attach> where Control : UIElement where Attach : UIElement
     {
-        public static readonly DependencyProperty AutoActiveProperty = DependencyProperty.Register("AutoActive", typeof(bool), typeof(ControlBehaviorCoreController<Control, Attach>));
+        public static readonly DependencyProperty AutoActiveProperty = DependencyProperty.Register("AutoActive", typeof(bool), typeof(ControlBehaviorCoreController<Control, Attach>), new PropertyMetadata(true));
         public bool AutoActive
         {
             get { return (bool)GetValue(AutoActiveProperty); }
