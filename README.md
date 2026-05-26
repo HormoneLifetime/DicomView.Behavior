@@ -2,6 +2,8 @@
 
 一个DICOM控件demo，核心思路是利用 `Behaviors` 将交互逻辑解耦为可复用的行为单元。同时使用controller管理behavior的互斥(如鼠标左键功能的调节窗宽窗位和绘制roi)，每个behavior只需着力于自身功能逻辑的开发，易扩展和维护。
 
+## 演示
+![演示](./Display.mp4)
 ## 两种实现方式
 
 主窗口左右两列展示两种 Behavior 拼装模式：
