@@ -1,0 +1,113 @@
+﻿<Window x:Class="DicomView.Display.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
+        xmlns:controllers="clr-namespace:DicomView.Behaviors.DicomBehaviors.Controller;assembly=DicomView.Behaviors"
+        xmlns:behaviorCores="clr-namespace:DicomView.Behaviors.DicomBehaviors.BehaviorCore;assembly=DicomView.Behaviors"
+        xmlns:behaviors="clr-namespace:DicomView.Behaviors.DicomBehaviors;assembly=DicomView.Behaviors"
+        xmlns:roi="clr-namespace:DicomView.Behaviors.ROI;assembly=DicomView.Behaviors"
+        xmlns:view="clr-namespace:DicomView.Behaviors;assembly=DicomView.Behaviors"
+        xmlns:local="clr-namespace:DicomView.Display"
+        mc:Ignorable="d"
+        Title="MainWindow" WindowState="Maximized">
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:BehaviorActiveConverter x:Key="behaviorActiveConverter" />
+            <roi:ROITypeConverter x:Key="roiTypeConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <ItemsControl Grid.Row="0" Grid.Column="0" x:Name="images" ItemsSource="{Binding Images}" Loaded="images_Loaded" Width="600" Height="700">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="2" Columns="2"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <view:DicomImageShell ROISource="{Binding ROIs}" PreviewMouseDown="DicomImageShell_PreviewMouseDown">
+                        <i:Interaction.Behaviors>
+                            <behaviors:MoveROIBehavior/>
+                        </i:Interaction.Behaviors>
+                    </view:DicomImageShell>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <i:Interaction.Behaviors>
+                <controllers:DicomImagesBehaviorCoreController x:Name="behaviorsController">
+                    <controllers:DicomImagesBehaviorCoreController.BehaviorCores>
+                        <behaviorCores:ItemsAdjustWindowCore AdjustWindowAction="TestAdjustWindow"/>
+                        <behaviorCores:ItemsROIBehaviorCore AddROIAction="AddROI"/>
+                        <behaviorCores:ItemsDragBehaviorCore ItemsMoved="ItemsMoved"/>
+                    </controllers:DicomImagesBehaviorCoreController.BehaviorCores>
+                </controllers:DicomImagesBehaviorCoreController>
+            </i:Interaction.Behaviors>
+        </ItemsControl>
+        <ItemsControl x:Name="images2" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Images2}" Width="600" Height="700">
+            <i:Interaction.Behaviors>
+                <behaviors:ItemsDragBehavior ItemsMoved="ItemsMoved2" IsActive="{Binding LeftButton, Mode=TwoWay, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.Move}}"/>
+            </i:Interaction.Behaviors>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="2" Columns="2"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <view:DicomImageShell ROISource="{Binding ROIs}" Loaded="DicomImageShell_Loaded">
+                        <i:Interaction.Behaviors>
+                            <behaviors:ItemsROIBehavior ROIType="{Binding DataContext.CurrentROI, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" AddROIAction="AddROI2" IsActive="{Binding DataContext.LeftButton,Mode=TwoWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.ROI}}"/>
+                            <behaviors:ItemsAdjustWindowBehavior AdjustWindowAction="TestAdjustWindow2" IsActive="{Binding DataContext.LeftButton,Mode=TwoWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.WindowLevel}}"/>
+                            <behaviors:MoveROIBehavior/>
+                        </i:Interaction.Behaviors>
+                    </view:DicomImageShell>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!--<ItemsControl Grid.Row="0" Grid.Column="1" x:Name="images2" ItemsSource="{Binding Images2}" Loaded="images2_Loaded" Width="600" Height="700">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="2" Columns="2"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <view:DicomImageShell ROISource="{Binding ROIs}" PreviewMouseDown="DicomImageShell_PreviewMouseDown2">
+                        <i:Interaction.Behaviors>
+                            <behaviors:MoveROIBehavior/>
+                        </i:Interaction.Behaviors>
+                    </view:DicomImageShell>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <i:Interaction.Behaviors>
+                <controllers:DicomImagesBehaviorCoreController x:Name="behaviorsController2" AutoActive="False">
+                    <controllers:DicomImagesBehaviorCoreController.BehaviorCores>
+                        <behaviorCores:ItemsAdjustWindowCore AdjustWindowAction="TestAdjustWindow2" IsActive="{Binding LeftButton,Mode=TwoWay, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.WindowLevel}}"/>
+                        <behaviorCores:ItemsROIBehaviorCore AddROIAction="AddROI2" IsActive="{Binding LeftButton,Mode=TwoWay, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.ROI}}"/>
+                        <behaviorCores:ItemsDragBehaviorCore ItemsMoved="ItemsMoved2" IsActive="{Binding LeftButton,Mode=TwoWay, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.Move}}"/>
+                    </controllers:DicomImagesBehaviorCoreController.BehaviorCores>
+                </controllers:DicomImagesBehaviorCoreController>
+            </i:Interaction.Behaviors>
+        </ItemsControl>-->
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <CheckBox Content="AdjustWindow" IsChecked="{Binding LeftButton, Mode=TwoWay, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.WindowLevel}}"/>
+                <CheckBox Content="Move" IsChecked="{Binding LeftButton, Mode=TwoWay, Converter={StaticResource behaviorActiveConverter}, ConverterParameter={x:Static behaviors:BehaviorType.Move}}"/>
+            </StackPanel>
+            <RadioButton Grid.Row="1" Content="LengthLine" GroupName="ROI" IsChecked="{Binding CurrentROI, Mode=TwoWay, Converter={StaticResource roiTypeConverter}, ConverterParameter={x:Static roi:ROIType.Line}}"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DicomView.Behavior/DicomView.Behaviors.csproj" />
+  <Project Path="DicomView.Display/DicomView.Display.csproj" Id="02ec7fee-03ad-4abf-80ca-0d1b4f3ff154" />
+</Solution>
